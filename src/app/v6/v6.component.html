@@ -1,0 +1,219 @@
+<div class="container">
+  <h1>SEIBOG</h1>
+  <h2>Selbsteinschätzungsbogen für IT-Berufe</h2>
+  <h3 *ngIf="!nameSubmitted">Mach den Test</h3>
+  <div *ngIf="nameSubmitted" class="row">
+    <div class="col-6">
+      <h3>Hallo {{user.name}}!</h3>
+    </div>
+    <div class="col-6">
+      <button *ngIf="!testSubmitted" type="button" class="btn btn-success float-right" (click)="submitTest();">Test
+        abschicken</button>
+      <button *ngIf="testSubmitted" type="button" class="btn btn-success float-right" routerLink="/dashboard">Zur
+        Übersicht -></button>
+    </div>
+  </div>
+  <!--USER NAME SET-->
+
+  <form *ngIf="!nameSubmitted" (ngSubmit)="onNameSubmit()" #userForm="ngForm">
+    <div *ngIf="usernameTaken" class="alert alert-danger" role="alert">
+      Der Username wird bereits verwendet, bitte benutze einen anderen, oder wähle deinen aus der Liste aus.
+    </div>
+
+    <!--SELECT USER FROM DB-->
+
+    <div class="form-group row">
+      <label for="exampleFormControlSelect1" class="col-sm-3 col-form-label">Wähle deinen Account aus: </label>
+      <div class="col-sm-7">
+        <select class="form-control" name="userNameSelect" [(ngModel)]="selectedUsername" id="exampleFormControlSelect1"
+          [disabled]="createdUsername != '' || dbusers.length == 0">
+          <option>keine Auswahl</option>
+          <option *ngFor="let dbuser of dbusers">{{dbuser.name}}</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary col-sm-2"
+        [disabled]="(selectedUsername == 'keine Auswahl') && (createdUsername == '')">Bestätigen</button>
+    </div>
+
+    <!--CREATE NEW USER-->
+
+    <div class="form-group row">
+      <label for="nameFormInput" class="col-sm-3 col-form-label">Oder erstelle einen neuen: </label>
+      <div class="col-sm-7">
+        <input type="text" name="userNameInput" class="form-control" id="nameFormInput" placeholder="Max Mustermann"
+          [(ngModel)]="createdUsername" [disabled]="!(selectedUsername == 'keine Auswahl')">
+      </div>
+    </div>
+  </form>
+
+
+
+<!--   
+  <div class="card">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-6">
+          <h3>Einführung</h3>
+        </div>
+        <div class="col-6">
+          <a class="btn btn-secondary float-right" data-toggle="collapse" href="#introduction" role="button"
+            aria-expanded="true" aria-controls="introduction">
+            <i class="fas fa-angle-down"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="card-body collapse show" id="introduction">
+      <p class="card-text">
+        Abläufe von Programmen können grafisch dargestellt werden. Die
+        Grafiken stellen ein Hilfsmittel dar, mit dem man sich Funktionsweisen von
+        Programmteilen klarmachen kann. Üblich sind hierfür Struktogramme -
+        auch Nassi-Shneiderman-Diagramme - genannt. In Struktogrammen werden
+        die folgenden Symbole verwendet.
+      </p>
+      <h5 class="card-title">Sequenz</h5>
+      <p>
+        Eine Sequenz enthält eine einzelne Anweisung oder den Titel eines Strukturblocks. Ein
+        Strukturblock ist eine Folge von zusammengehörigen Anweisungen. Ein Struktogramm
+        wird immer von oben nach unten gelesen.
+      </p>
+      <h5 class="card-title">Verzweigung</h5>
+      <p class="card-text">
+        Wir unterscheiden die einfache und die zweifache Auswahl.
+        Bei einer einfachen Auswahl wird eine Bedingung geprüft und im Ja-Fall eine oder
+        mehrere Aktionen durchgeführt. Der Nein-Fall bleibt leer. (Hab ich noch genügend Geld?
+        Ja: bestelle eine Cola, Nein: - ). Bei der zweifachen Auswahl wird, je nachdem, wie das Ergebnis der Bedingung
+        ausfällt,
+        dieses oder jenes getan. (Fahre ich später mit dem Auto heim? Ja: bestelle Cola, Nein:
+        bestelle Bier).
+      </p>
+      <h5 class="card-title">Fallauswahl</h5>
+      <p class="card-text">
+        In vielen Fällen ist die Ja/Nein-Entscheidung nicht ausreichend. Oft gibt es mehr als zwei
+        Möglichkeiten, die verschiedene Ergebnisse nach sich ziehen.
+        Beispiel
+      </p>
+
+      <div class="row">
+        <div class="col-6">
+          <table class="table table-dark">
+            <thead>
+              <tr>
+                <th scope="col" colspan="2">Weihnachtsgeld nach Betriebszugehörigkeit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">0 Jahre</th>
+                <td>0% eines Gehaltes</td>
+              </tr>
+              <tr>
+                <th scope="row">1 Jahr</th>
+                <td>20% eines Gehaltes</td>
+              </tr>
+              <tr>
+                <th scope="row">2 Jahre</th>
+                <td>50% eines Gehaltes</td>
+              </tr>
+              <tr>
+                <th scope="row">3 Jahre</th>
+                <td>80% eines Gehaltes</td>
+              </tr>
+              <tr>
+                <th scope="row">Sonst</th>
+                <td>100% eines Gehaltes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+
+  <div class="card fixed-top" style="width: 15%;">
+    <div class="card-header">
+      Current User
+    </div>
+    <div class="card-body">
+      <p>Name : {{user.name}}</p>
+      <p>id: {{user._id}}</p>
+      <p>score: {{user.score}}</p>
+    </div>
+  </div>
+
+  <!--LOADING SPRITE-->
+
+  <div *ngIf="isLoadingQuestions">
+    <img src="../../assets/ico/loading.svg" class="mx-auto d-block">
+  </div>
+
+  <!--LOADING ERROR-->
+
+  <div *ngIf="errorWhileLoadingQuestions" class="alert alert-danger" role="alert">
+    Fehler beim Laden der Fragen
+  </div>
+
+  <!--BEGIN OF QUESTIONS LOOP-->
+
+  <div *ngFor="let question of questions; index as i" [ngClass]="{'text-white bg-success': results[i]}"
+    class="card my-2">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-6">
+          <h5>Frage {{i+1}}</h5>
+        </div>
+        <div class="col-6">
+          <a class="btn btn-secondary float-right" data-toggle="collapse" href="#question{{i}}" role="button"
+            aria-expanded="false" aria-controls="collapseExample">
+            <i class="fas fa-angle-down"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!--QUESTION BODY-->
+
+    <div [ngClass]="{'show': i == 0 }" class="card-body collapse" id="question{{i}}">
+      <div class="row">
+        <div class="col-12 col-md-4">
+          <img *ngFor="let image of question.images" class="img-fluid my-2" src="{{image}}">
+        </div>
+        <div class="col-12 col-md-4">
+          <p>{{question.question}}</p>
+        </div>
+        <div class="col-12 col-md-4">
+
+          <!--SELECT ANSWERS-->
+
+          <div *ngIf="question.type == 1">
+            <form>
+              <div *ngFor="let answer of question.possibleAnswers; index as k" class="form-check my-2">
+                <input class="form-check-input" name="question{{i}}checkbox{{k}}" type="checkbox"
+                  id="question{{i}}checkbox{{k}}" [(ngModel)]="answers[i].tickedBoxes[k]">
+                <label class="form-check-label" for="checkboxForField{{k}}">
+                  {{answer}}
+                </label>
+              </div>
+            </form>
+          </div>
+
+          <!--ASSIGN ANSWERS-->
+
+          <div *ngIf="question.type == 2">
+            <form>
+              <div *ngFor="let field of question.possibleFields; index as j" class="form-group">
+                <label for="possibleAnswersOfField{{j}}}" class="text-right">{{field}}</label>
+                <select class="form-control" id="possibleAnswersOfField{{j}}" name="selectForQuestion{{i}}"
+                  [(ngModel)]="answers[i].chosenFields[j]">
+                  <option *ngFor="let answer of question.possibleAnswers">{{answer}}</option>
+                </select>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
