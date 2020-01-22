@@ -1,0 +1,127 @@
+<div class="container" id="creatorFrame">
+  <h1>
+    Neuen Test erstellen
+    <button *ngIf="!testSubmitted" type="submit" class="btn btn-success mt-3 float-right" (click)="onSubmit()">Senden</button>
+    <button *ngIf="testSubmitted" type="submit" class="btn btn-success mt-3 float-right" routerLink="/dashboard/collection">Zur Übersicht</button>
+    <button type="button" class="btn btn-primary mt-3 mr-2 float-right" data-toggle="modal" data-target="#exampleModal">
+      Hilfe
+    </button>
+  </h1>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Anleitung</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Ein Fragebogen besteht aus mehreren Fragen. Eine Frage muss einem von drei Fragetypen angehören:</p>
+            <ol>
+              <li>Multiple Choice Frage</li>
+              <li>Zuordnungs-Frage</li>
+              <li>Coding Aufgabe</li>
+            </ol>
+            <p>Der Typ lässt sich über das Dropdown-Menü festlegen</p>
+            <img src="../../../assets/type_select.PNG" class="img-fluid">
+            <h5>1. Multiple Choice Frage</h5>
+            <img src="../../../assets/multiple_choice_example.PNG" class="img-fluid">
+            <h5>2. Zuordnungs-Frage</h5>
+            <p>Bei Zurdnungs-Fragen müssen die passenden Paare gebildet werden.</p>
+            <div class="row">
+              <div class="col-6">
+                <p>Im Generator:</p>
+                <img src="../../../assets/zuordnung_editor.PNG" class="img-fluid">
+              </div>
+              <div class="col-6">
+                <p>Die generierte Frage:</p>
+                <img src="../../../assets/zuordnung_example.PNG" class="img-fluid">
+              </div>
+            </div>
+            <h5>3. Coding Aufgabe</h5>
+            <p>demnächst...</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Okay</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  <div *ngIf="gotTestToEdit || !editMode">
+  <div [formGroup]="testForm">
+    <div class="form-group">
+      <label for="testName">Titel</label>
+      <input type="text" formControlName="name" id="testName" class="form-control">
+    </div>
+
+    <div class="form-group">
+      <label for="description">Beschreibung</label>
+      <textarea class="form-control" id="description" formControlName="description"></textarea>
+    </div>
+
+    
+
+    <h4>Fragen</h4>
+
+        <div formArrayName="questions" *ngFor="let question of testForm.controls.questions.controls; let i = index;" class="card my-2">
+            <div [formGroupName]="i" class="">
+              <div class="card-header d-flex justify-content-between">
+                <div class="d-flex justify-content-start">
+                  <div class="form-group ml-3">
+                    <select class="form-control" id="type" formControlName="type">
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                    </select>
+                  </div>
+                </div>
+                <button class="btn btn-danger float-right d-flex justify-content-center align-content-between" (click)="deleteQuestion(i)"><i class="material-icons">clear</i></button>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12 col-md-2">
+                    <h5>Bild</h5>
+                      <input type='file' name='image' id="question{{i}}Img" class="form-control-file"/>
+                      <img class="img-fluid" src="{{question.get('images').value}}">
+                  </div>
+                  <div class="col-12 col-md-5">
+                    <label for="question"><h5>Frage</h5></label>
+                    <textarea formControlName="question" id="question" class="form-control"></textarea>
+                  </div>
+                  <div class="col-12 col-md-5">
+                    <h5>Antworten</h5>
+                    <p *ngIf="question.get('type').value === '2'">Zugehörige Paare:</p>
+                    <div formArrayName="answers" *ngFor="let answer of question.get('answers').controls; let j = index;" class="mt-2">
+                      <div *ngIf="question.get('type').value === '1'" [formGroupName] ="j">
+                        <input type="text" formControlName="possibleAnswer" class="form-control">
+                      </div>
+                      <div *ngIf="question.get('type').value === '2'">
+                        <div [formGroupName] ="j" class="row">
+                          <input type="text" formControlName="possibleField" class="form-control col-5 ml-3" placeholder="öffentlich">
+                          <input type="text" formControlName="possibleAnswer" class="form-control col-5 ml-3" placeholder="public">
+                        </div>
+                      </div>
+                      <div *ngIf="question.get('type').value === '3'">
+                        <div [formGroupName] ="j">
+                          <input type="text" formControlName="possibleField" class="form-control col-12" placeholder="{{j+1}}. Durchlauf">
+                          <input type="text" formControlName="possibleAnswer" class="form-control col-12 mt-2" class="d-none">
+                        </div>
+                      </div>
+                    </div>
+                    <button class="btn btn-primary mt-2 ml-2 float float-left d-flex justify-content-center align-content-between" (click)="addPossibleAnswer(question.controls.answers)"><i class="material-icons">add</i></button>
+                    <button class="btn btn-danger mt-2 ml-2 float-left d-flex justify-content-center align-content-between" (click)="deletePossibleAnswer(question.controls.answers)"><i class="material-icons">clear</i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+    
+    <button class="btn btn-primary d-flex justify-content-center align-content-between" (click)="addQuestion()"><i class="material-icons">add</i>Neue Frage</button>
+    <!--<button class="btn btn-primary" (click)="log()">log</button>-->
+
+  </div>
+</div>

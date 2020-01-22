@@ -1,0 +1,166 @@
+<!--LOADING SPRITE-->
+<div *ngIf="isLoadingQuestions">
+  <img src="../../../assets/ico/loading.svg" class="mx-auto d-block">
+</div>
+
+<!--IMAGE MODAL-->
+<div class="modal fade" id="imgModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <img class="img-fluid" src="{{modalImgString}}">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--SUBMIT MODAL-->
+  <div class="modal fade" id="submitModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Test abschicken?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+          <div class="modal-body">
+            <p>Bist du sicher, dass du den Test abschicken möchtest?<br>Hast du alle Fragen ausgefüllt?</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-success text-white" (click)="submitTest()">Senden</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+<div *ngIf="!isLoadingQuestions && this.test" class="container" id="testView">
+  <h2>{{test.name}}
+    <button *ngIf="!testSubmitted && !solutionMode" type="button" class="btn btn-success float-right" (click)="submitPrompt()">Test
+    abschicken</button>
+    <button *ngIf="!testSubmitted && solutionMode" type="button" class="btn btn-success float-right" (click)="submitSolutions()">Lösungen senden</button>
+    <button *ngIf="testSubmitted" type="button" class="btn btn-success float-right" routerLink="/dashboard/collection">Zur
+      Übersicht</button>
+  </h2>
+
+
+
+  <div *ngIf="test.intro" class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-6">
+              <h5>Einführung</h5>
+            </div>
+            <div class="col-6">
+              <a class="btn btn-secondary float-right" data-toggle="collapse" href="#intro" role="button"
+                 aria-expanded="false" aria-controls="collapseExample">
+                <i class="material-icons">
+                  keyboard_arrow_down
+                </i>
+              </a>
+            </div>
+          </div>
+    </div>
+    <div class="card-body collapse" [innerHtml]="test.intro" id="intro"></div>
+  </div>
+
+  <!--BEGIN OF QUESTIONS LOOP-->
+
+  <div *ngIf="test != null">
+    <div *ngFor="let question of test.questions; index as i" class="card my-2" [ngClass]="{'bg-success': reportMode && results[i] && testSubmitted, 'bg-warning': reportMode && !results[i] && testSubmitted && !solutionMode, 'text-white': reportMode && testSubmitted && !solutionMode}">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-6">
+            <h5>Frage {{i+1}}</h5>
+          </div>
+          <div class="col-6">
+            <a class="btn btn-secondary float-right" data-toggle="collapse" href="#question{{i}}" role="button"
+               aria-expanded="false" aria-controls="collapseExample">
+              <i class="material-icons">
+                keyboard_arrow_down
+              </i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!--QUESTION BODY-->
+
+      <div [ngClass]="{'show': i == 0 }" class="card-body collapse" id="question{{i}}">
+        <div class="row">
+          <div class="col-12 col-md-4">
+            <img class="img-fluid my-2" (click)="imgZoom(question.images)" src="{{question.images}}">
+          </div>
+          <div class="col-12 col-md-4">
+            <p [innerHtml]="question.question"></p>
+          </div>
+          <div class="col-12 col-md-4">
+
+            <!--SELECT ANSWERS-->
+
+            <div *ngIf="question.type == 1">
+              <form>
+                <div *ngFor="let answer of question.possibleAnswers; index as k" class="form-check my-2">
+                  <input [disabled]="reportMode" class="form-check-input" name="question{{i}}checkbox{{k}}" type="checkbox"
+                         id="question{{i}}checkbox{{k}}" [(ngModel)]="answers[i].tickedBoxes[k]">
+                  <label class="form-check-label" for="question{{i}}checkbox{{k}}">
+                    {{answer}}
+                  </label>
+                </div>
+              </form>
+            </div>
+
+            <!--ASSIGN ANSWERS-->
+
+            <div *ngIf="question.type == 2 && !reportMode">
+              <form>
+                <div *ngFor="let field of question.possibleFields; index as j" class="form-group">
+                  <label for="possibleAnswersOfField{{j}}" class="text-right">{{field}}</label>
+                  <select class="form-control" id="possibleAnswersOfField{{j}}" name="selectForQuestion{{i}}"
+                          [(ngModel)]="answers[i].chosenFields[j]">
+                    <option *ngFor="let answer of question.possibleAnswers">{{answer}}</option>
+                  </select>
+                </div>
+              </form>
+            </div>
+            
+
+            <div *ngIf="question.type == 2 && reportMode">
+              <form>
+                <div *ngFor="let field of question.possibleFields; index as j" class="form-group">
+                  <label for="possibleAnswersOfField{{j}}" class="text-right">{{field}}</label>
+                  <input disabled class="form-control" placeholder="{{answers[i].chosenFields[j]}}">
+                </div>
+              </form>
+            </div>
+
+            <!--ARRAY ANSWERS-->
+
+            <div *ngIf="question.type == 3 && !reportMode">
+              <form>
+                <div *ngFor="let field of question.possibleFields; index as j" class="form-group">
+                  <label for="possibleAnswersOfField{{j}}" class="text-right">{{field}}</label>
+                  <input [disabled]="reportMode" class="form-control" id="possibleAnswersOfField{{j}}" name="selectForQuestion{{i}}"
+                          [(ngModel)]="answers[i].chosenFields[j]">
+                </div>
+              </form>
+            </div>
+
+            <div *ngIf="question.type == 3 && reportMode">
+              <form>
+                <div *ngFor="let field of question.possibleFields; index as j" class="form-group">
+                  <label for="possibleAnswersOfField{{j}}" class="text-right">{{field}}</label>
+                  <input [disabled]="reportMode" class="form-control" id="possibleAnswersOfField{{j}}" name="selectForQuestion{{i}}"
+                          placeholder="{{answers[i].chosenFields[j]}}">
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

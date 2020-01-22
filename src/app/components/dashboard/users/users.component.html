@@ -1,0 +1,30 @@
+<div class="container" id="dashboard">
+    <h1>Teilnehmer</h1>
+
+    <div *ngIf="isLoadingUsers" class="text-center">
+        <div class="spinner-grow" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+
+    <div *ngIf="!isLoadingUsers && users &&users.length == 0 && !errorWhileLoadingUsers" class="alert alert-info"
+        role="alert">
+        Derzeit sind keine Teilnehmer registriert.
+    </div>
+
+    <ul class="list-group">
+        <li *ngFor="let user of users" class="list-group-item">
+            <div class="row">
+                <div class="col-2">
+                    {{user.firstName | titlecase}} {{user.lastName | titlecase}}
+                </div>
+                <div class="col-1">
+                    <span class="badge badge-primary badge-pill"> Score: {{user.score}}</span>
+                </div>
+                <div class="col-1 offset-8">
+                    <button class="btn btn-primary float-right" routerLink="/users/{{user._id}}">Profil</button>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>

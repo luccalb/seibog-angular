@@ -1,0 +1,24 @@
+<div class="container text-center" id="loginFrame">
+  <div class="row justify-content-center">
+      <div class="col-6">
+          <div class="jumbotron">
+              <h2>Anmelden</h2>
+              <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                  <label for="inputTaNumber">TA-Nummer</label>
+                  <input type="text" formControlName="taNumber" class="form-control text-center" [ngClass]="{ 'is-invalid': submitted && f.taNumber.errors }" id="inputTaNumber" aria-describedby="taNumber" placeholder="TXXXXXA">
+                  <div *ngIf="submitted && f.taNumber.errors" class="invalid-feedback">
+                    <div *ngIf="f.taNumber.errors.required">TA-Nummer wird benötigt</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Kennwort</label>
+                  <input type="password" formControlName="password" placeholder="BK-Kennwort" class="form-control text-center" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" id="exampleInputPassword1">
+                </div>          
+                <button [disabled]="loading" type="submit" class="btn btn-primary">Login</button>
+              </form>
+            </div>
+      </div>
+  </div>
+  
+</div>

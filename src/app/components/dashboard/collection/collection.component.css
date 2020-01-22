@@ -1,0 +1,9 @@
+#dashboard{
+    margin-top: 10vh;
+    margin-bottom: 50vh;
+}
+
+a > i {
+  font-size: 56px;
+  text-align: center;
+}

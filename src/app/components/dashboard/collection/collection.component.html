@@ -1,0 +1,53 @@
+<div class="container" id="dashboard">
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Test löschen?</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+            <div class="modal-body">
+              <p>Bist du sicher, dass du den Test "{{deleteName}}" löschen möchtest?</p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-danger text-white" (click)="deleteTest()">Löschen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+  <h1>Fragebögen</h1>
+
+  <div *ngFor="let tests of testMetas" >
+    <div *ngIf="tests.solutions || (authService.currentUser && authService.currentUser.admin)" class="card text-center mb-3">
+      <div class="card-header text-muted">
+        <a *ngIf="authService.currentUser && authService.currentUser.admin" routerLink="/dashboard/edit/{{tests._id}}" (click)="switchEditMode(tests._id)" class="btn btn-primary float-left">Bearbeiten</a>
+        {{tests._id}}
+        <a *ngIf="authService.currentUser && authService.currentUser.admin" (click)="deletePrompt(tests)" class="btn btn-danger float-right text-white">Löschen</a>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">{{tests.name}}</h5>
+        <p class="card-text">{{tests.description}}</p>
+        <div *ngIf="tests.solutions">
+          <a routerLink="/test/{{tests._id}}" class="btn btn-primary">Zum Test</a>
+          <a *ngIf="authService.currentUser && authService.currentUser.admin" routerLink="/test/{{tests._id}}/report" class="btn btn-outline-secondary ml-1">Zur Auswertung</a>
+        </div>
+        <div *ngIf="!tests.solutions && authService.currentUser && authService.currentUser.admin && !loadingMetas">
+          <a routerLink="/test/{{tests._id}}/solutions" class="btn btn-primary" (click)="switchMode(tests._id)">Lösungen ergänzen</a>
+        </div>
+      </div>
+      <div class="card-footer text-muted">
+        Teilnehmer: {{tests.participants}}
+      </div>
+    </div>
+  </div>
+  <div *ngIf="authService.currentUser && authService.currentUser.admin" class="card text-center ">
+    <div class="card-body">
+      <a routerLink="/dashboard/create"><i class="material-icons">
+        add_circle
+      </i></a>
+      <p class="mt-1">Erstelle einen neuen Fragebogen</p>
+    </div>
+  </div>
+</div>

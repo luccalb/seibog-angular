@@ -1,0 +1,11 @@
+<div *ngIf="isLoadingUser">
+    <img src="../../../assets/ico/loading.svg" class="mx-auto d-block">
+</div>
+<div *ngIf="!isLoadingUser && !errorWhileLoadingUser" class="container" id="dashboard">
+  <h1>{{user.firstName | titlecase}} {{user.lastName | titlecase}}</h1>  
+  <hr>
+  <h2><span>Erstellungdatum:</span>&nbsp;{{ user.createdDate.substring(0,10) }}</h2>
+  <h3><span>Erreichte Punkte:</span>&nbsp;{{ user.score }}</h3>
+  <hr>
+</div>
+

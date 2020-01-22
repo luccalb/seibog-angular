@@ -1,0 +1,29 @@
+<div class="container" id="report">
+  <h2>Auswertung</h2>
+  <div *ngIf="isLoadingReport">
+    <img src="../../../assets/ico/loading.svg" class="mx-auto d-block">
+  </div>
+  <div *ngIf="!isLoadingReport && report.length == 0 && !errorWhileLoadingReport" class="alert alert-info" role="alert">
+    Derzeit sind keine Ergebnisse verfügbar.
+  </div>
+  <ul *ngIf="!isLoadingReport" class="list-group">
+    <li *ngFor="let entry of report" class="list-group-item">
+      <div class="row">
+        <div class="col-3">
+          {{getUserNameById(entry.userId) | titlecase}}
+        </div>
+        <div class="col-3">
+          {{dateToString(entry.submitDate)}}
+        </div>
+        <div class="col-3">
+          <span class="badge badge-success badge-pill mr-2">{{getRight(entry.results)}}</span>/
+          <span class="badge badge-danger badge-pill">{{entry.results.length - getRight(entry.results)}}</span>
+        </div>
+        <div class="col-3">
+          <button class="btn btn-primary float-right"
+            routerLink="/test/{{entry.testId}}/report/{{entry._id}}">Details</button>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

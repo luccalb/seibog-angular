@@ -1,5 +1,7 @@
 export class TestResults {
-    userid: string;
-    version: string;
-    results: boolean[];
+  userId: string;
+  testId: string;
+  results: boolean[];
+  submitDate: Date;
+  answers;
 }

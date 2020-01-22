@@ -1,6 +1,10 @@
 
 export class User {
     _id: string;
-    name: string;
+    taNumber: string;
+    firstName: string;
+    lastName: string;
+    password: string;
     score: number;
+    admin: boolean;
 }
